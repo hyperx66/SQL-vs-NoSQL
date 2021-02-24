@@ -29,5 +29,33 @@ $(document).ready(function() {
 });
 
 function registerUser() {
+    var role = document.getElementById("accountType").value
+    var store = document.getElementById("stores").value
+    var username = document.getElementById("username").value
+    var password = document.getElementById("password").value
+    var confirmPassword = document.getElementById("confirmPassword").value
+    var fullName = document.getElementById("fullName").value
+    var phoneNum = document.getElementById("phoneNum").value
 
+    if (confirmPassword == password) {
+        $.ajax({
+            type: "POST",
+            url: "./assets/php/addUser.php",
+            data: {
+                username: username,
+                password: password,
+                staffName: fullName,
+                mobileNum: phoneNum,
+                store: store,
+                role: role
+            },
+        }).done(function(result) {
+            if (result == 1) {
+                alert("Account creation successful")
+                window.location.href = "./login.html"
+            } else {
+                alert("An error occurred. Please try again.")
+            }
+        });
+    }
 }

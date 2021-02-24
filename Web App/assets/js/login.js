@@ -13,9 +13,11 @@ function login() {
         var jsonObj = JSON.parse(result)
         var roleType = jsonObj[0]["role"]
         var staffId = jsonObj[0]["staffId"]
+        var storeId = jsonObj[0]["storeId"]
         var uiLogin = document.getElementById("redirectPage").value
 
         document.cookie = "staffId=" + staffId + "; expires=Sun, 18 Dec 2022 12:00:00 UTC";
+        document.cookie = "storeId=" + storeId + "; expires=Sun, 18 Dec 2022 12:00:00 UTC";
 
         if (roleType == 1) {
             if (uiLogin == "pos") {

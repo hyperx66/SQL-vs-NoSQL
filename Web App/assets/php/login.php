@@ -6,7 +6,7 @@ $password = $_GET["password"];
 $currentDateTime = date("Y-m-d H:m:s");
 
 //Retrieve user details
-$sqlQuery = $conn->prepare("SELECT staffId, role FROM staff INNER JOIN login ON staff.staffId = login.loginUser WHERE login.loginUsername = ? AND login.loginPassword = ?");
+$sqlQuery = $conn->prepare("SELECT staffId, role, storeId FROM staff INNER JOIN login ON staff.staffId = login.loginUser WHERE login.loginUsername = ? AND login.loginPassword = ?");
 $sqlQuery->bind_param("ss", $username, $password);
 $sqlQuery->execute();
 $result = $sqlQuery->get_result();

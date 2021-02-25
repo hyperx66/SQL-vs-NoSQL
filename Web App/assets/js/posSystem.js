@@ -72,6 +72,7 @@ function purchaseProduct() {
     }).done(function(result) {
         if (result == 1) {
             alert("Transaction Successful!")
+            $("#purchaseModal").modal("hide")
         } else {
             alert("Transaction Error Occurred")
         }

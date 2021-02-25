@@ -3,7 +3,7 @@ require('connection.php');
 
 $storeId = $_COOKIE["storeId"];
 
-$sqlQuery = $conn->prepare("SELECT store_itemID, itemId, quantity FROM store_item WHERE storeId = ?");
+$sqlQuery = $conn->prepare("SELECT i.itemId, i.itemName, i.price, si.quantity FROM store_item si INNER JOIN item i ON si.itemId = i.itemId WHERE si.storeId = ?");
 $sqlQuery->bind_param("i", $storeId);
 $sqlQuery->execute();
 $result = $sqlQuery->get_result();

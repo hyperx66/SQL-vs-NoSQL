@@ -50,11 +50,13 @@ def getRoles():
     all_roles = list(roles.find({}, {"_id": 0, "roleId": 1, "roleName": 1}))
     return json.dumps(all_roles)
 
+
 @app.route("/getStores", methods=["GET"])
 def getStores():
     all_stores = list(stores.find(
         {}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
+
 
 @app.route("/loginUser", methods=["POST"])
 def loginUser():
@@ -74,6 +76,7 @@ def loginUser():
     else:
         print("app.py loginUser LOG: cannot find user/pass combo")
         return "0"
+
 
 @app.route("/addUser", methods=["POST"])
 def addUser():
@@ -112,13 +115,32 @@ def productManagement():
 
 @app.route('/getItemStore', methods=['GET'])
 def get_ItemStore():
-    all_products = list(items.find(
-        {}, {"_id": 0, "itemid": 1, "itemName": 1, "price": 1, "quantity": 1}))
-    print(json.dumps(all_products))
+    all_products = list(item.find(
+        {}, {"_id": 0, "itemId": 1, "itemName": 1, "price": 1, "quantity": 1}))
     return json.dumps(all_products)
 
 
+@app.route('/updateProduct', methods=['POST'])
+def updateProduct():
+    productName = request.form["productName"]
+    productPrice = request.form["productPrice"]
+    productQuantity = request.form["productQuantity"]
+    itemId = request.form["itemId"]
+    myquery = {"itemId": itemId}
+    newvalues = {"$set": {"itemId": itemId,
+                          "itemName": productName,
+                          "price": productPrice,
+                          "quantity": productQuantity
+                          }}
+    x = item.update_one(myquery, newvalues)
+    if x is not None:
+        return "1"
+    else:
+        return "0"
+
 # POS
+
+
 @app.route("/getUser", methods=["POST"])
 def getUser():
     staff_id = request.cookies.get("staffId")
@@ -138,11 +160,14 @@ def getUser():
         return "0"
 
 
+'''
 @app.route("/getItemStore", methods=["GET"])
 def getItemStore():
-    all_products = list(items.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
+    all_products = list(
+        item.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
     print(all_products)
     return json.dumps(all_products)
+'''
 
 
 @app.route("/createTransaction", methods=["POST"])
@@ -158,6 +183,7 @@ def createTransaction():
     print(storeId)
     print(staffId)
     return "1"
+
 
 if __name__ == "__main__":
     # Threaded option to enable multiple instances for multiple user access support

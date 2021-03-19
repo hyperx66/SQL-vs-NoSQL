@@ -20,11 +20,11 @@ app.config[
 mongo = PyMongo(app)
 
 # Declare the collection
+item = mongo.db.Item
 products = mongo.db.products
-roles = mongo.db.roles
-stores = mongo.db.stores
-users = mongo.db.users
-items = mongo.db.Item
+roles = mongo.db.Role
+stores = mongo.db.Store
+users = mongo.db.User
 
 
 @app.route("/", methods=["GET"])
@@ -48,7 +48,6 @@ def registerPage():
 def getRoles():
     all_roles = list(roles.find({}, {"_id": 0, "roleId": 1, "roleName": 1}))
     return json.dumps(all_roles)
-
 
 @app.route("/getStores", methods=["GET"])
 def getStores():

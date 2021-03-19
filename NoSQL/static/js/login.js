@@ -3,17 +3,19 @@ function login() {
     var password = document.getElementById("password").value
 
     $.ajax({
-        type: "GET",
-        url: "./assets/php/login.php",
+        type: "POST",
+        url: "/loginUser",
         data: {
             username: username,
             password: password,
         },
     }).done(function(result) {
         var jsonObj = JSON.parse(result)
-        var roleType = jsonObj[0]["role"]
-        var staffId = jsonObj[0]["staffId"]
-        var storeId = jsonObj[0]["storeId"]
+        console.log("login.js LOG: " + jsonObj)
+
+        var roleType = jsonObj["role"]
+        var staffId = jsonObj["staffId"]
+        var storeId = jsonObj["storeId"]
         var uiLogin = document.getElementById("redirectPage").value
 
         document.cookie = "staffId=" + staffId + "; expires=Sun, 18 Dec 2022 12:00:00 UTC";

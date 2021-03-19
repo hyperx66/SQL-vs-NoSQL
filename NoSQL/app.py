@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_pymongo import PyMongo
 import json
 from time import gmtime, strftime
+from bson.json_util import dumps
 
 app = Flask(__name__)
 
@@ -53,6 +54,24 @@ def getStores():
     all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
 
+@app.route("/loginUser", methods=["POST"])
+def loginUser():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    cred_dict = {
+        "loginUsername": username,
+        "loginPassword": password
+    }
+
+    result = users.find_one(cred_dict)
+    if result is not None:
+        print("app.py LOG: logged in")
+        print("app.py LOG: " + dumps(result))
+        return dumps(result)
+    else:
+        print("app.py LOG: cannot find user/pass combo")
+        return "0"
 
 @app.route("/addUser", methods=["POST"])
 def addUser():

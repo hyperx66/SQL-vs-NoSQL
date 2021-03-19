@@ -5,12 +5,13 @@ $(document).ready(function () {
   var productTable = $("#dataTable").DataTable();
 
   $.ajax({
-    type: "GET",
-    url: "./assets/php/getUser.php",
+    type: "POST",
+    url: "/getUser",
     data: {},
   }).done(function (result) {
+    console.info(result)
     var jsonObj = JSON.parse(result);
-    var staffName = jsonObj[0]["staffName"];
+    var staffName = jsonObj["staffName"];
     $("#staffLogin").html(staffName);
   });
 

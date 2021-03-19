@@ -3,6 +3,7 @@ from flask_pymongo import PyMongo
 import json
 from time import gmtime, strftime
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
@@ -55,18 +56,6 @@ def getStores():
         {}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
 
-# @app.route("/getUser", methods=["POST"])
-# def getUser():
-#     user_id = request.form["user_id"]
-
-#     pk_dict = {
-#         "user_id": user_id
-#     }
-
-#     result = users.find_one({""})
-
-
-
 @app.route("/loginUser", methods=["POST"])
 def loginUser():
     username = request.form["username"]
@@ -77,17 +66,13 @@ def loginUser():
         "loginPassword": password
     }
 
-    print("app.py LOG: " + request.cookies.get("staffId"))
-    # for k in request.cookies:
-    #     print(typeOf(k))
-
     result = users.find_one(cred_dict)
     if result is not None:
-        print("app.py LOG: logged in")
-        print("app.py LOG: " + dumps(result))
+        print("app.py loginUser LOG: logged in")
+        print("app.py loginUser LOG: " + dumps(result))
         return dumps(result)
     else:
-        print("app.py LOG: cannot find user/pass combo")
+        print("app.py loginUser LOG: cannot find user/pass combo")
         return "0"
 
 @app.route("/addUser", methods=["POST"])
@@ -127,24 +112,36 @@ def productManagement():
 
 @app.route('/getItemStore', methods=['GET'])
 def get_ItemStore():
-    all_products = list(item.find(
+    all_products = list(items.find(
         {}, {"_id": 0, "itemid": 1, "itemName": 1, "price": 1, "quantity": 1}))
     print(json.dumps(all_products))
     return json.dumps(all_products)
 
 
 # POS
-@app.route("/getUser", methods=["GET"])
+@app.route("/getUser", methods=["POST"])
 def getUser():
-    user_arry = list(users.find({}, {"_id": 0, "staffName": 1}))
-    # print(user_arry)
-    return json.dumps(user_arry)
+    staff_id = request.cookies.get("staffId")
+    print("app.py getUser LOG: " + staff_id)
+
+    staffid_dict = {
+        "_id": ObjectId(staff_id)
+    }
+
+    result = users.find_one(staffid_dict)
+
+    if result is not None:
+        print("app.py getUser LOG: found" + dumps(result))
+        return dumps(result)
+    else:
+        print("app.py getUser LOG: cannot getUser")
+        return "0"
 
 
 @app.route("/getItemStore", methods=["GET"])
 def getItemStore():
-    all_products = list(item.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
-    # print(all_products)
+    all_products = list(items.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
+    print(all_products)
     return json.dumps(all_products)
 
 

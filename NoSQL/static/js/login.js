@@ -9,7 +9,7 @@ function login() {
             username: username,
             password: password,
         },
-    }).done(function(result) {
+    }).done(function (result) {
         var jsonObj = JSON.parse(result)
         console.log("login.js LOG: " + jsonObj)
 
@@ -23,7 +23,7 @@ function login() {
 
         if (roleType == 1) {
             if (uiLogin == "pos") {
-                window.location.href = "./posDashboard.html"
+                window.location.href = "./posDashboard"
             } else if (uiLogin == "pms") {
                 alert("You are not allowed to enter this system please choose a different system.")
             } else {
@@ -31,17 +31,17 @@ function login() {
             }
         } else if (roleType == 2) {
             if (uiLogin == "pos") {
-                window.location.href = "./posDashboard.html"
+                window.location.href = "./posDashboard"
             } else if (uiLogin == "pms") {
-                window.location.href = "./staffDashboard.html"
+                window.location.href = "./staffDashboard"
             } else {
                 alert("Please choose a system to log into.")
             }
         } else if (roleType == 3) {
             if (uiLogin == "pos") {
-                window.location.href = "./posDashboard.html"
+                window.location.href = "./posDashboard"
             } else if (uiLogin == "pms") {
-                window.location.href = "./staffDashboard.html"
+                window.location.href = "./staffDashboard"
             } else {
                 alert("Please choose a system to log into.")
             }

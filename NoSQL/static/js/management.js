@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $.ajax({
         type: "GET",
-        url: "./assets/php/getUser.php",
+        url: "/getUser",
         data: {},
     }).done(function(result) {
         var jsonObj = JSON.parse(result)

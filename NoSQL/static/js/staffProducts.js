@@ -5,12 +5,13 @@ $(document).ready(function () {
   var productTable = $("#dataTable").DataTable();
 
   $.ajax({
-    type: "GET",
-    url: "./assets/php/getUser.php",
+    type: "POST",
+    url: "/getUser",
     data: {},
   }).done(function (result) {
+    console.info(result);
     var jsonObj = JSON.parse(result);
-    var staffName = jsonObj[0]["staffName"];
+    var staffName = jsonObj["staffName"];
     $("#staffLogin").html(staffName);
   });
 
@@ -40,6 +41,7 @@ $(document).ready(function () {
 function info(productIndex) {
   var productArr = jsonObj[productIndex];
   var productId = productArr["itemId"];
+  console.log(productArr, productId);
   var productName = productArr["itemName"];
   var productPrice = productArr["price"];
   var productQuantity = productArr["quantity"];
@@ -56,10 +58,9 @@ function updateProduct() {
   var productName = document.getElementById("productName").value;
   var productPrice = document.getElementById("productPrice").value;
   var productQuantity = document.getElementById("productQuantity").value;
-
   $.ajax({
     type: "POST",
-    url: "./assets/php/updateProduct.php",
+    url: "/updateProduct",
     data: {
       itemId: currentSelectedProduct,
       productName: productName,

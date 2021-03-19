@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/getUser",
         data: {},
     }).done(function(result) {

@@ -189,7 +189,7 @@ def getItemStore():
 def createTransaction():
     print("Hi, testing 123")
     print(request.form)
-    # itemId = request.form["itemId"]
+    itemId = int(request.form["itemId"])
     chosenQuantity = request.form["chosenQuantity"]
     originalQuantity = request.form["originalQuantity"]
     resultingPrice = request.form["resultingPrice"]
@@ -205,7 +205,7 @@ def createTransaction():
     mydict = {
         "transactionBy": staffId,
         "storeId": storeId,
-        "itemPurchased": 1,
+        "itemPurchased": itemId,
         "quantityPurchased": chosenQuantity,
         "price": resultingPrice,
         "datePurchased": currentDateTime,
@@ -214,10 +214,10 @@ def createTransaction():
 
     updateDict = {
         "StoreId": storeId,
-        "ItemId": 1,
+        "ItemId": itemId,
         "Quantity": newQty,
     }
-    myquery = {"StoreId": storeId, "ItemId": 1}
+    myquery = {"StoreId": storeId, "ItemId": itemId}
     newvalues = {"$set": {"Quantity": newQty}}
 
     y = storeItem.update_one(myquery, newvalues)

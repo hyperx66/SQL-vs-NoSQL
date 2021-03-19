@@ -23,7 +23,7 @@ function login() {
 
         if (roleType == 1) {
             if (uiLogin == "pos") {
-                window.location.href = "./posDashboard"
+                window.location.href = "/"
             } else if (uiLogin == "pms") {
                 alert("You are not allowed to enter this system please choose a different system.")
             } else {
@@ -31,7 +31,7 @@ function login() {
             }
         } else if (roleType == 2) {
             if (uiLogin == "pos") {
-                window.location.href = "./posDashboard"
+                window.location.href = "/"
             } else if (uiLogin == "pms") {
                 window.location.href = "./staffDashboard"
             } else {
@@ -39,7 +39,7 @@ function login() {
             }
         } else if (roleType == 3) {
             if (uiLogin == "pos") {
-                window.location.href = "./posDashboard"
+                window.location.href = "/"
             } else if (uiLogin == "pms") {
                 window.location.href = "./staffDashboard"
             } else {

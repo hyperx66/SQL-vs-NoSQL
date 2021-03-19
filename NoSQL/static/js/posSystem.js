@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     $.ajax({
         type: "GET",
-        url: "./assets/php/getUser.php",
+        url: "/getUser",
         data: {},
     }).done(function(result) {
         var jsonObj = JSON.parse(result)
@@ -17,7 +17,7 @@ $(document).ready(function() {
 
     $.ajax({
         type: "GET",
-        url: "./assets/php/getItemStore.php",
+        url: "/getItemStore",
         data: {},
     }).done(function(result) {
         jsonObj = JSON.parse(result)
@@ -62,7 +62,7 @@ function purchaseProduct() {
 
     $.ajax({
         type: "POST",
-        url: "./assets/php/createTransaction.php",
+        url: "/createTransaction",
         data: {
             itemId: currentSelectedProduct,
             chosenQuantity: chosenQuantity,

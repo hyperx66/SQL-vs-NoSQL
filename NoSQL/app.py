@@ -118,6 +118,33 @@ def get_ItemStore():
     return json.dumps(all_products)
 
 
+# POS
+
+@app.route("/getUser", methods=["GET"])
+def getUser():
+    user_arry = list(users.find({}, {"_id": 0, "staffName": 1}))
+    print(user_arry)
+    return json.dumps(user_arry)
+
+
+@app.route("/getItemStore", methods=["GET"])
+def getItemStore():
+    all_products = list(items.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
+    print(all_products)
+    return json.dumps(all_products)
+
+
+@app.route("/createTransaction", methods=["POST"])
+def createTransaction():
+    itemId = request.form["itemId"]
+    chosenQuantity = request.form["chosenQuantity"]
+    originalQuantity = request.form["originalQuantity"]
+    resultingPrice = request.form["resultingPrice"]
+    storeId = request.cookies.get("storeId")
+    staffId = request.cookies.get("staffId")
+    print(originalQuantity)
+    print(staffId)
+
 if __name__ == "__main__":
     # Threaded option to enable multiple instances for multiple user access support
     app.run(debug=True, threaded=True, port=8080)

@@ -127,38 +127,40 @@ def productManagement():
 
 @app.route('/getItemStore', methods=['GET'])
 def get_ItemStore():
-    all_products = list(items.find(
+    all_products = list(item.find(
         {}, {"_id": 0, "itemid": 1, "itemName": 1, "price": 1, "quantity": 1}))
     print(json.dumps(all_products))
     return json.dumps(all_products)
 
 
 # POS
-
 @app.route("/getUser", methods=["GET"])
 def getUser():
     user_arry = list(users.find({}, {"_id": 0, "staffName": 1}))
-    print(user_arry)
+    # print(user_arry)
     return json.dumps(user_arry)
 
 
 @app.route("/getItemStore", methods=["GET"])
 def getItemStore():
-    all_products = list(items.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
-    print(all_products)
+    all_products = list(item.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
+    # print(all_products)
     return json.dumps(all_products)
 
 
 @app.route("/createTransaction", methods=["POST"])
 def createTransaction():
-    itemId = request.form["itemId"]
+    print("Hi, testing 123")
+    print(request.form)
+    # itemId = request.form["itemId"]
     chosenQuantity = request.form["chosenQuantity"]
     originalQuantity = request.form["originalQuantity"]
     resultingPrice = request.form["resultingPrice"]
     storeId = request.cookies.get("storeId")
     staffId = request.cookies.get("staffId")
-    print(originalQuantity)
+    print(storeId)
     print(staffId)
+    return "1"
 
 if __name__ == "__main__":
     # Threaded option to enable multiple instances for multiple user access support

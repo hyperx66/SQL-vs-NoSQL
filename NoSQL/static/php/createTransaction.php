@@ -1,7 +1,7 @@
 <?php
 require('connection.php');
 
-$itemId = $_POST["itemId"];
+// $itemId = $_POST["itemId"];
 $chosenQuantity = $_POST["chosenQuantity"];
 $originalQuantity = $_POST["originalQuantity"];
 $resultingPrice = $_POST["resultingPrice"];

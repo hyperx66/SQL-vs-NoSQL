@@ -1,6 +1,7 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_pymongo import PyMongo
 import json
+from time import gmtime, strftime
 
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ mongo = PyMongo(app)
 products = mongo.db.products
 roles = mongo.db.roles
 stores = mongo.db.stores
+users = mongo.db.users
 
 
 @app.route("/", methods=["GET"])
@@ -45,6 +47,34 @@ def getRoles():
 def getStores():
     all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
+
+
+@app.route("/addUser", methods=["POST"])
+def addUser():
+    username = request.form["username"]
+    password = request.form["password"]
+    staffName = request.form["staffName"]
+    mobileNum = request.form["mobileNum"]
+    store = request.form["store"]
+    role = request.form["role"]
+    currentDateTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    mydict = {
+        "staffName": staffName,
+        "mobileNum": mobileNum,
+        "storeId": store,
+        "role": role,
+        "createdDate": currentDateTime,
+        "updatedDate": currentDateTime,
+        "loginUsername": username,
+        "loginPassword": password,
+    }
+
+    x = users.insert_one(mydict)
+    print(password)
+
+    # all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
+    return "1"
 
 
 if __name__ == "__main__":

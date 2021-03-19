@@ -52,7 +52,7 @@ function registerUser() {
         }).done(function (result) {
             if (result == 1) {
                 alert("Account creation successful")
-                window.location.href = "./login.html"
+                window.location.href = "./login"
             } else {
                 alert("An error occurred. Please try again.")
             }

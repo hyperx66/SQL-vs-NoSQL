@@ -21,17 +21,22 @@ mongo = PyMongo(app)
 
 # Declare the collection
 item = mongo.db.Item
-products = mongo.db.products
 roles = mongo.db.Role
 stores = mongo.db.Store
 users = mongo.db.User
+storeItem = mongo.db.Store_Item
+transaction = mongo.db.Transaction
 
+
+
+# @app.route("/", methods=["GET"])
+# def get_products():
+#     all_products = item.find({}, {"itemName": 1, "price": 1, "quantity": 1})
+#     return render_template("posDashboard.html", all_products=all_products)
 
 @app.route("/", methods=["GET"])
 def get_products():
-    all_products = products.find({}, {"name": 1, "price": 1, "quantity": 1})
-    return render_template("posDashboard.html", all_products=all_products)
-
+    return render_template("posDashboard.html")
 
 @app.route("/login", methods=["GET"])
 def login():
@@ -77,7 +82,7 @@ def loginUser():
         "loginPassword": password
     }
 
-    print("app.py LOG: " + request.cookies.get("staffId"))
+    # print("app.py LOG: " + request.cookies.get("staffId"))
     # for k in request.cookies:
     #     print(typeOf(k))
 
@@ -156,11 +161,44 @@ def createTransaction():
     chosenQuantity = request.form["chosenQuantity"]
     originalQuantity = request.form["originalQuantity"]
     resultingPrice = request.form["resultingPrice"]
-    storeId = request.cookies.get("storeId")
+    storeId = int(request.cookies.get("storeId"))
     staffId = request.cookies.get("staffId")
+    currentDateTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
     print(storeId)
     print(staffId)
-    return "1"
+    print("Hello world")
+
+    newQty = int(originalQuantity) - int(chosenQuantity)
+
+    mydict = {
+        "transactionBy": staffId,
+        "storeId": storeId,
+        "itemPurchased": 1,
+        "quantityPurchased": chosenQuantity,
+        "price": resultingPrice,
+        "datePurchased": currentDateTime,
+    }
+    x = transaction.insert_one(mydict)
+
+    updateDict = {
+        "StoreId": storeId,
+        "ItemId": 1,
+        "Quantity": newQty,
+    }
+    myquery = { "StoreId": storeId, "ItemId": 1 }
+    newvalues = { "$set": { "Quantity": newQty } }
+
+    y = storeItem.update_one(myquery, newvalues)
+    
+    print("Hello hell")
+    print("x is", x)
+    print("y is", y)
+
+    if x: 
+        return "1"
+    else: 
+        return "0"
+
 
 if __name__ == "__main__":
     # Threaded option to enable multiple instances for multiple user access support

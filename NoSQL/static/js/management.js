@@ -4,9 +4,9 @@ $(document).ready(function() {
         url: "/getUser",
         data: {},
     }).done(function(result) {
-        var jsonObj = JSON.parse(result)
-        var staffName = jsonObj[0]["staffName"]
-        $("#staffLogin").html(staffName)
+        var jsonObj = JSON.parse(result);
+        var staffName = jsonObj["staffName"];
+        $("#staffLogin").html(staffName);
     })
 
     $.ajax({

@@ -24,6 +24,7 @@ products = mongo.db.products
 roles = mongo.db.roles
 stores = mongo.db.stores
 users = mongo.db.users
+items = mongo.db.Item
 
 
 @app.route("/", methods=["GET"])
@@ -51,7 +52,8 @@ def getRoles():
 
 @app.route("/getStores", methods=["GET"])
 def getStores():
-    all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
+    all_stores = list(stores.find(
+        {}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
 
 @app.route("/loginUser", methods=["POST"])
@@ -99,6 +101,21 @@ def addUser():
         return "1"
     else:
         return "0"
+
+# Product Management
+
+
+@app.route('/productManagement', methods=['GET'])
+def productManagement():
+    return render_template("productManagement.html")
+
+
+@app.route('/getItemStore', methods=['GET'])
+def get_ItemStore():
+    all_products = list(items.find(
+        {}, {"_id": 0, "itemid": 1, "itemName": 1, "price": 1, "quantity": 1}))
+    print(json.dumps(all_products))
+    return json.dumps(all_products)
 
 
 if __name__ == "__main__":

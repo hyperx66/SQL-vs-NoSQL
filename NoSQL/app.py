@@ -6,9 +6,16 @@ from time import gmtime, strftime
 app = Flask(__name__)
 
 # Establish connection to mongodb hosted on mongodb Atlas
+
+# WEI JIAN ACCOUNT
+# app.config[
+#     "MONGO_URI"
+# ] = "mongodb+srv://root:weijian!96@dbproject.bhdqc.mongodb.net/dbproject?retryWrites=true&w=majority"
+
+# SHARED ACCOUNT
 app.config[
     "MONGO_URI"
-] = "mongodb+srv://root:weijian!96@dbproject.bhdqc.mongodb.net/dbproject?retryWrites=true&w=majority"
+] = "mongodb+srv://admin:DBprojectCSC2008@dbproject.lkyvi.mongodb.net/dbproject?retryWrites=true&w=majority"
 mongo = PyMongo(app)
 
 # Declare the collection
@@ -21,8 +28,6 @@ users = mongo.db.users
 @app.route("/", methods=["GET"])
 def get_products():
     all_products = products.find({}, {"name": 1, "price": 1, "quantity": 1})
-    # for i in all_products:
-    #     print(i)
     return render_template("posDashboard.html", all_products=all_products)
 
 
@@ -71,10 +76,10 @@ def addUser():
     }
 
     x = users.insert_one(mydict)
-    print(password)
-
-    # all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
-    return "1"
+    if x is not None:
+        return "1"
+    else:
+        return "0"
 
 
 if __name__ == "__main__":

@@ -55,6 +55,18 @@ def getStores():
         {}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
 
+# @app.route("/getUser", methods=["POST"])
+# def getUser():
+#     user_id = request.form["user_id"]
+
+#     pk_dict = {
+#         "user_id": user_id
+#     }
+
+#     result = users.find_one({""})
+
+
+
 @app.route("/loginUser", methods=["POST"])
 def loginUser():
     username = request.form["username"]
@@ -64,6 +76,10 @@ def loginUser():
         "loginUsername": username,
         "loginPassword": password
     }
+
+    print("app.py LOG: " + request.cookies.get("staffId"))
+    # for k in request.cookies:
+    #     print(typeOf(k))
 
     result = users.find_one(cred_dict)
     if result is not None:

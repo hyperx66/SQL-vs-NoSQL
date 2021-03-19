@@ -14,7 +14,7 @@ function login() {
         console.log("login.js LOG: " + jsonObj)
 
         var roleType = jsonObj["role"]
-        var staffId = jsonObj["staffId"]
+        var staffId = jsonObj["_id"]["$oid"]
         var storeId = jsonObj["storeId"]
         var uiLogin = document.getElementById("redirectPage").value
 

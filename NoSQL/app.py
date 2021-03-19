@@ -12,14 +12,12 @@ mongo = PyMongo(app)
 # Declare the collection
 products = mongo.db.products
 
-# @app.route('/')
-# def index():
-#     return render_template('posDashboard.html')
-
 
 @app.route("/", methods=["GET"])
 def get_products():
     all_products = products.find({}, {"name": 1, "price": 1, "quantity": 1})
+    # for i in all_products:
+    #     print(i)
     return render_template("posDashboard.html", all_products=all_products)
 
 

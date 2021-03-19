@@ -1,10 +1,10 @@
-$(document).ready(function() {
+$(document).ready(function () {
     //Load All Roles
     $.ajax({
         type: "GET",
-        url: "./assets/php/getRoles.php",
+        url: "/getRoles",
         data: {},
-    }).done(function(result) {
+    }).done(function (result) {
         var roleOptions = ""
         jsonObj = JSON.parse(result)
         jsonObj.forEach(row => {
@@ -16,9 +16,9 @@ $(document).ready(function() {
     //Load All Stores
     $.ajax({
         type: "GET",
-        url: "./assets/php/getStores.php",
+        url: "/getStores",
         data: {},
-    }).done(function(result) {
+    }).done(function (result) {
         var storeOptions = ""
         jsonObj = JSON.parse(result)
         jsonObj.forEach(row => {
@@ -40,7 +40,7 @@ function registerUser() {
     if (confirmPassword == password) {
         $.ajax({
             type: "POST",
-            url: "./assets/php/addUser.php",
+            url: "/addUser",
             data: {
                 username: username,
                 password: password,
@@ -49,7 +49,7 @@ function registerUser() {
                 store: store,
                 role: role
             },
-        }).done(function(result) {
+        }).done(function (result) {
             if (result == 1) {
                 alert("Account creation successful")
                 window.location.href = "./login.html"

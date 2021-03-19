@@ -29,15 +29,16 @@ storeItem = mongo.db.Store_Item
 transaction = mongo.db.Transaction
 
 
-
 # @app.route("/", methods=["GET"])
 # def get_products():
 #     all_products = item.find({}, {"itemName": 1, "price": 1, "quantity": 1})
 #     return render_template("posDashboard.html", all_products=all_products)
 
+
 @app.route("/", methods=["GET"])
 def get_products():
     return render_template("posDashboard.html")
+
 
 @app.route("/login", methods=["GET"])
 def login():
@@ -58,8 +59,7 @@ def getRoles():
 
 @app.route("/getStores", methods=["GET"])
 def getStores():
-    all_stores = list(stores.find(
-        {}, {"_id": 0, "storeId": 1, "storeName": 1}))
+    all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
     return json.dumps(all_stores)
 
 
@@ -68,10 +68,7 @@ def loginUser():
     username = request.form["username"]
     password = request.form["password"]
 
-    cred_dict = {
-        "loginUsername": username,
-        "loginPassword": password
-    }
+    cred_dict = {"loginUsername": username, "loginPassword": password}
 
     result = users.find_one(cred_dict)
     if result is not None:
@@ -110,38 +107,53 @@ def addUser():
     else:
         return "0"
 
+
 # Product Management
 
 
-@app.route('/productManagement', methods=['GET'])
+@app.route("/productManagement", methods=["GET"])
 def productManagement():
     return render_template("productManagement.html")
 
 
-@app.route('/getItemStore', methods=['GET'])
+@app.route("/getItemStore", methods=["GET"])
 def get_ItemStore():
-    all_products = list(item.find(
-        {}, {"_id": 0, "itemId": 1, "itemName": 1, "price": 1, "quantity": 1}))
-    return json.dumps(all_products)
+    storeId = int(request.cookies.get("storeId"))
+    all_products = list(
+        item.find({}, {"_id": 0, "itemId": 1, "itemName": 1, "price": 1, "quantity": 1})
+    )
+    new_all_products = []
+    for product in all_products:
+        prodItem = storeItem.find_one(
+            {"StoreId": storeId, "ItemId": int(product["itemId"])}
+        )
+        product["quantity"] = prodItem["Quantity"]
+        new_all_products.append(product)
+
+    return json.dumps(new_all_products)
 
 
-@app.route('/updateProduct', methods=['POST'])
+@app.route("/updateProduct", methods=["POST"])
 def updateProduct():
     productName = request.form["productName"]
     productPrice = request.form["productPrice"]
     productQuantity = request.form["productQuantity"]
     itemId = request.form["itemId"]
     myquery = {"itemId": itemId}
-    newvalues = {"$set": {"itemId": itemId,
-                          "itemName": productName,
-                          "price": productPrice,
-                          "quantity": productQuantity
-                          }}
+    newvalues = {
+        "$set": {
+            "itemId": itemId,
+            "itemName": productName,
+            "price": productPrice,
+            "quantity": productQuantity,
+        }
+    }
     x = item.update_one(myquery, newvalues)
     if x is not None:
         return "1"
     else:
         return "0"
+
 
 # POS
 
@@ -151,9 +163,7 @@ def getUser():
     staff_id = request.cookies.get("staffId")
     print("app.py getUser LOG: " + staff_id)
 
-    staffid_dict = {
-        "_id": ObjectId(staff_id)
-    }
+    staffid_dict = {"_id": ObjectId(staff_id)}
 
     result = users.find_one(staffid_dict)
 
@@ -165,14 +175,14 @@ def getUser():
         return "0"
 
 
-'''
+"""
 @app.route("/getItemStore", methods=["GET"])
 def getItemStore():
     all_products = list(
         item.find({}, {"_id": 0, "itemName": 1, "price": 1, "quantity": 1}))
     print(all_products)
     return json.dumps(all_products)
-'''
+"""
 
 
 @app.route("/createTransaction", methods=["POST"])
@@ -207,20 +217,19 @@ def createTransaction():
         "ItemId": 1,
         "Quantity": newQty,
     }
-    myquery = { "StoreId": storeId, "ItemId": 1 }
-    newvalues = { "$set": { "Quantity": newQty } }
+    myquery = {"StoreId": storeId, "ItemId": 1}
+    newvalues = {"$set": {"Quantity": newQty}}
 
     y = storeItem.update_one(myquery, newvalues)
-    
+
     print("Hello hell")
     print("x is", x)
     print("y is", y)
 
-    if x: 
+    if x:
         return "1"
-    else: 
+    else:
         return "0"
-
 
 
 if __name__ == "__main__":

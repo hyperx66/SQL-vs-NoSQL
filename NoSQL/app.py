@@ -120,7 +120,8 @@ def productManagement():
 def get_ItemStore():
     storeId = int(request.cookies.get("storeId"))
     all_products = list(
-        item.find({}, {"_id": 0, "itemId": 1, "itemName": 1, "price": 1, "quantity": 1})
+        item.find({}, {"_id": 0, "itemId": 1,
+                       "itemName": 1, "price": 1, "quantity": 1})
     )
     new_all_products = []
     for product in all_products:
@@ -139,21 +140,29 @@ def updateProduct():
     productPrice = request.form["productPrice"]
     productQuantity = request.form["productQuantity"]
     itemId = request.form["itemId"]
-    myquery = {"itemId": itemId}
+    storeId = int(request.cookies.get("storeId"))
+    itemquery = {"itemId": int(itemId)}
+    storequery = {"StoreId": storeId, "ItemId": int(itemId)}
+    print(storeId, itemId)
     newvalues = {
         "$set": {
-            "itemId": itemId,
             "itemName": productName,
             "price": productPrice,
-            "quantity": productQuantity,
         }
     }
-    x = item.update_one(myquery, newvalues)
-    if x is not None:
+    newquantity = {
+        "$set": {
+            "Quantity": int(productQuantity),
+        }
+    }
+
+    y = item.update_one(itemquery, newvalues)
+    z = storeItem.update_one(storequery, newquantity)
+    print("store item document updated is "+str(z.modified_count))
+    if z and y is not None:
         return "1"
     else:
         return "0"
-
 
 # POS/Management Page
 @app.route("/getUser", methods=["POST"])

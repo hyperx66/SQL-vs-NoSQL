@@ -11,7 +11,7 @@ $(document).ready(function() {
 
     $.ajax({
         type: "GET",
-        url: "./assets/php/getStats.php",
+        url: "/getStats",
         data: {},
     }).done(function(result) {
         var jsonObj = JSON.parse(result)

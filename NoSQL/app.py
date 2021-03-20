@@ -27,7 +27,7 @@ stores = mongo.db.Store
 users = mongo.db.User
 storeItem = mongo.db.Store_Item
 transaction = mongo.db.Transaction
-
+stats = mongo.db.Stats
 
 # @app.route("/", methods=["GET"])
 # def get_products():
@@ -155,9 +155,7 @@ def updateProduct():
         return "0"
 
 
-# POS
-
-
+# POS/Management Page
 @app.route("/getUser", methods=["POST"])
 def getUser():
     staff_id = request.cookies.get("staffId")
@@ -173,6 +171,22 @@ def getUser():
     else:
         print("app.py getUser LOG: cannot getUser")
         return "0"
+
+# Staff DashBoard
+@app.route("/staffDashboard", methods=["GET"])
+def staffDashboard():
+    return render_template("staffDashboard.html")
+
+# getStats to populate Chart/Overview Values
+"""
+@app.route("/getStats", methods=["GET"])
+def getStats():
+    # Check form
+    store_id = str(request.cookies.get("storeId"))
+    print("app.py getStats LOG: " + store_id)
+    return ("app.py getStats LOG: " + store_id)
+"""
+
 
 
 """

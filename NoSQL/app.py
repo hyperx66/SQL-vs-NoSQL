@@ -187,14 +187,28 @@ def staffDashboard():
     return render_template("staffDashboard.html")
 
 # getStats to populate Chart/Overview Values
-"""
 @app.route("/getStats", methods=["GET"])
 def getStats():
-    # Check form
-    store_id = str(request.cookies.get("storeId"))
-    print("app.py getStats LOG: " + store_id)
-    return ("app.py getStats LOG: " + store_id)
-"""
+    # Check Store ID
+    store_id = request.cookies.get("storeId")
+    print("app.py getStats LOG: " + str(store_id))
+
+    currentYear = strftime("%Y", gmtime())
+    print("Year: ", currentYear)
+
+    all_stats = list(
+        stats.find({}, {"_id": 0, "earnings": 1,
+                       "month": 1, "transactions": 1, "year": 1})
+    )
+
+    #currentMonth = request.form["currentMonth"]
+    #transactionTotal = request.form["transactionsTotal"]
+    #earningsSum = request.form["earningsSum"]
+    
+    #transactionChart = request.form["transactionChart"]
+    #earningsChart = request.form["earingsChart"]
+    return json.dumps(all_stats)
+    #return (str(currentMonth) + str(transactionTotal) + str(earningsSum))
 
 
 

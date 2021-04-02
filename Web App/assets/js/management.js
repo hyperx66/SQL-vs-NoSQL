@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $.ajax({
-        type: "GET",
-        url: "./assets/php/getUser.php",
+        type: "POST",
+        url: "/getUser",
         data: {},
     }).done(function(result) {
         var jsonObj = JSON.parse(result)
@@ -14,7 +14,7 @@ $(document).ready(function() {
         url: "./assets/php/getStats.php",
         data: {},
     }).done(function(result) {
-        var jsonObj = JSON.parse(result)
+        var jsonObj = JSON.parse(result)    
         initAllValues(jsonObj)
     })
 })

@@ -27,7 +27,7 @@ stores = mongo.db.Store
 users = mongo.db.User
 storeItem = mongo.db.Store_Item
 transaction = mongo.db.Transaction
-
+stats = mongo.db.Stats
 
 # @app.route("/", methods=["GET"])
 # def get_products():
@@ -120,7 +120,8 @@ def productManagement():
 def get_ItemStore():
     storeId = int(request.cookies.get("storeId"))
     all_products = list(
-        item.find({}, {"_id": 0, "itemId": 1, "itemName": 1, "price": 1, "quantity": 1})
+        item.find({}, {"_id": 0, "itemId": 1,
+                       "itemName": 1, "price": 1, "quantity": 1})
     )
     new_all_products = []
     for product in all_products:
@@ -139,25 +140,31 @@ def updateProduct():
     productPrice = request.form["productPrice"]
     productQuantity = request.form["productQuantity"]
     itemId = request.form["itemId"]
-    myquery = {"itemId": itemId}
+    storeId = int(request.cookies.get("storeId"))
+    itemquery = {"itemId": int(itemId)}
+    storequery = {"StoreId": storeId, "ItemId": int(itemId)}
+    print(storeId, itemId)
     newvalues = {
         "$set": {
-            "itemId": itemId,
             "itemName": productName,
             "price": productPrice,
-            "quantity": productQuantity,
         }
     }
-    x = item.update_one(myquery, newvalues)
-    if x is not None:
+    newquantity = {
+        "$set": {
+            "Quantity": int(productQuantity),
+        }
+    }
+
+    y = item.update_one(itemquery, newvalues)
+    z = storeItem.update_one(storequery, newquantity)
+    print("store item document updated is "+str(z.modified_count))
+    if z and y is not None:
         return "1"
     else:
         return "0"
 
-
-# POS
-
-
+# POS/Management Page
 @app.route("/getUser", methods=["POST"])
 def getUser():
     staff_id = request.cookies.get("staffId")
@@ -174,6 +181,36 @@ def getUser():
         print("app.py getUser LOG: cannot getUser")
         return "0"
 
+# Staff DashBoard
+@app.route("/staffDashboard", methods=["GET"])
+def staffDashboard():
+    return render_template("staffDashboard.html")
+
+# getStats to populate Chart/Overview Values
+@app.route("/getStats", methods=["GET"])
+def getStats():
+    # Check Store ID
+    store_id = request.cookies.get("storeId")
+    print("app.py getStats LOG: " + str(store_id))
+
+    currentYear = strftime("%Y", gmtime())
+    print("Year: ", currentYear)
+
+    all_stats = list(
+        stats.find({}, {"_id": 0, "earnings": 1,
+                       "month": 1, "transactions": 1, "year": 1})
+    )
+
+    #currentMonth = request.form["currentMonth"]
+    #transactionTotal = request.form["transactionsTotal"]
+    #earningsSum = request.form["earningsSum"]
+    
+    #transactionChart = request.form["transactionChart"]
+    #earningsChart = request.form["earingsChart"]
+    return json.dumps(all_stats)
+    #return (str(currentMonth) + str(transactionTotal) + str(earningsSum))
+
+
 
 """
 @app.route("/getItemStore", methods=["GET"])
@@ -189,7 +226,7 @@ def getItemStore():
 def createTransaction():
     print("Hi, testing 123")
     print(request.form)
-    # itemId = request.form["itemId"]
+    itemId = int(request.form["itemId"])
     chosenQuantity = request.form["chosenQuantity"]
     originalQuantity = request.form["originalQuantity"]
     resultingPrice = request.form["resultingPrice"]
@@ -205,7 +242,7 @@ def createTransaction():
     mydict = {
         "transactionBy": staffId,
         "storeId": storeId,
-        "itemPurchased": 1,
+        "itemPurchased": itemId,
         "quantityPurchased": chosenQuantity,
         "price": resultingPrice,
         "datePurchased": currentDateTime,
@@ -214,10 +251,10 @@ def createTransaction():
 
     updateDict = {
         "StoreId": storeId,
-        "ItemId": 1,
+        "ItemId": itemId,
         "Quantity": newQty,
     }
-    myquery = {"StoreId": storeId, "ItemId": 1}
+    myquery = {"StoreId": storeId, "ItemId": itemId}
     newvalues = {"$set": {"Quantity": newQty}}
 
     y = storeItem.update_one(myquery, newvalues)

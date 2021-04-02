@@ -5,7 +5,11 @@ $storeId = $_COOKIE["storeId"];
 
 $currentYear = idate("Y");
 
-$sqlQuery = $conn->prepare("select year(datePurchased) AS year,month(datePurchased) as month,COALESCE(sum(price),0) as earnings, count(transactionId) as transactions from transaction where storeId = ? AND year(datePurchased) = ? group by year(datePurchased),month(datePurchased) order by year(datePurchased),month(datePurchased)");
+$sqlQuery = $conn->prepare("select year(datePurchased) AS year,
+month(datePurchased) as month,
+COALESCE(sum(price),0) as earnings, 
+count(transactionId) as transactions from transaction where storeId = ? AND 
+year(datePurchased) = ? group by year(datePurchased),month(datePurchased) order by year(datePurchased),month(datePurchased)");
 $sqlQuery->bind_param("is", $storeId, $currentYear);
 $sqlQuery->execute();
 $result = $sqlQuery->get_result();

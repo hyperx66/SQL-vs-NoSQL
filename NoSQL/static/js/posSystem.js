@@ -6,13 +6,14 @@ $(document).ready(function() {
     var productTable = $('#dataTable').DataTable();
 
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/getUser",
         data: {},
     }).done(function(result) {
+        console.log(result)
         var jsonObj = JSON.parse(result);
         var staffName = jsonObj["staffName"];
-        $("#staffLogin").html(staffName);
+        $("#userFullName").html(staffName);
     })
 
     $.ajax({

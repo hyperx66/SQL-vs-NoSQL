@@ -6,8 +6,8 @@ $(document).ready(function() {
     var productTable = $('#dataTable').DataTable();
 
     $.ajax({
-        type: "GET",
-        url: "./assets/php/getUser.php",
+        type: "POST",
+        url: "/getUser",
         data: {},
     }).done(function(result) {
         var jsonObj = JSON.parse(result)

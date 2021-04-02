@@ -1,0 +1,234 @@
+from flask import Flask, render_template, jsonify, request
+from flask_pymongo import PyMongo
+import json
+from time import gmtime, strftime
+from bson.json_util import dumps
+from bson.objectid import ObjectId
+
+app = Flask(__name__)
+
+# Establish connection to mongodb hosted on mongodb Atlas
+
+# WEI JIAN ACCOUNT
+# app.config[
+#     "MONGO_URI"
+# ] = "mongodb+srv://root:weijian!96@dbproject.bhdqc.mongodb.net/dbproject?retryWrites=true&w=majority"
+
+# SHARED ACCOUNT
+app.config["MONGO_URI"] = "mongodb://localhost:27017/dbproject"
+mongo = PyMongo(app)
+
+# Declare the collection
+item = mongo.db.Item
+roles = mongo.db.Role
+stores = mongo.db.Store
+users = mongo.db.User
+storeItem = mongo.db.Store_Item
+transaction = mongo.db.Transaction
+stats = mongo.db.Stats
+
+
+@app.route("/", methods=["GET"])
+def get_products():
+    return render_template("posDashboard.html")
+
+
+@app.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")
+
+
+# REGISTER PAGE API's
+@app.route("/register", methods=["GET"])
+def registerPage():
+    return render_template("register.html")
+
+
+@app.route("/getRoles", methods=["GET"])
+def getRoles():
+    all_roles = list(roles.find({}, {"_id": 0, "roleId": 1, "roleName": 1}))
+    return json.dumps(all_roles)
+
+
+@app.route("/getStores", methods=["GET"])
+def getStores():
+    all_stores = list(stores.find({}, {"_id": 0, "storeId": 1, "storeName": 1}))
+    return json.dumps(all_stores)
+
+
+@app.route("/loginUser", methods=["POST"])
+def loginUser():
+    username = request.form["username"]
+    password = request.form["password"]
+
+    cred_dict = {"loginUsername": username, "loginPassword": password}
+
+    result = users.find_one(cred_dict)
+    if result is not None:
+        return dumps(result)
+    else:
+        print("app.py loginUser LOG: cannot find user/pass combo")
+        return "0"
+
+
+@app.route("/addUser", methods=["POST"])
+def addUser():
+    username = request.form["username"]
+    password = request.form["password"]
+    staffName = request.form["staffName"]
+    mobileNum = request.form["mobileNum"]
+    store = request.form["store"]
+    role = request.form["role"]
+    currentDateTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+    mydict = {
+        "staffName": staffName,
+        "mobileNum": mobileNum,
+        "storeId": store,
+        "role": role,
+        "createdDate": currentDateTime,
+        "updatedDate": currentDateTime,
+        "loginUsername": username,
+        "loginPassword": password,
+    }
+
+    x = users.insert_one(mydict)
+    if x is not None:
+        return "1"
+    else:
+        return "0"
+
+
+# Product Management
+
+
+@app.route("/productManagement", methods=["GET"])
+def productManagement():
+    return render_template("productManagement.html")
+
+
+@app.route("/getItemStore", methods=["GET"])
+def get_ItemStore():
+    storeId = int(request.cookies.get("storeId"))
+    all_products = list(item.find({}, {"_id": 0, "itemId": 1, "itemName": 1}))
+    new_all_products = []
+    for product in all_products:
+        prodItem = storeItem.find_one(
+            {"storeId": storeId, "itemId": int(product["itemId"])}
+        )
+        product["quantity"] = prodItem["quantity"]
+        product["price"] = prodItem["price"]
+        new_all_products.append(product)
+
+    print(len(new_all_products))
+    return json.dumps(new_all_products)
+
+
+@app.route("/updateProduct", methods=["POST"])
+def updateProduct():
+    productName = request.form["productName"]
+    productPrice = request.form["productPrice"]
+    productQuantity = request.form["productQuantity"]
+    itemId = request.form["itemId"]
+    storeId = int(request.cookies.get("storeId"))
+    itemquery = {"itemId": int(itemId)}
+    storequery = {"storeId": storeId, "itemId": int(itemId)}
+
+    newvalues = {
+        "$set": {
+            "itemName": productName,
+            "price": productPrice,
+        }
+    }
+    newquantity = {
+        "$set": {
+            "quantity": int(productQuantity),
+        }
+    }
+
+    y = item.update_one(itemquery, newvalues)
+    z = storeItem.update_one(storequery, newquantity)
+    print("store item document updated is " + str(z.modified_count))
+    if z and y is not None:
+        return "1"
+    else:
+        return "0"
+
+
+# POS/Management Page
+@app.route("/getUser", methods=["POST"])
+def getUser():
+    staff_id = request.cookies.get("staffId")
+    print("app.py getUser LOG: " + staff_id)
+
+    staffid_dict = {"_id": ObjectId(staff_id)}
+
+    result = users.find_one(staffid_dict)
+
+    if result is not None:
+        print("app.py getUser LOG: found" + dumps(result))
+        return dumps(result)
+    else:
+        print("app.py getUser LOG: cannot getUser")
+        return "0"
+
+
+# Staff DashBoard
+@app.route("/staffDashboard", methods=["GET"])
+def staffDashboard():
+    return render_template("staffDashboard.html")
+
+
+# getStats to populate Chart/Overview Values
+@app.route("/getStats", methods=["GET"])
+def getStats():
+    # Check Store ID
+    store_id = request.cookies.get("storeId")
+    print("app.py getStats LOG: " + str(store_id))
+
+    currentYear = strftime("%Y", gmtime())
+    print("Year: ", currentYear)
+
+    all_stats = list(
+        stats.find(
+            {}, {"_id": 0, "earnings": 1, "month": 1, "transactions": 1, "year": 1}
+        )
+    )
+    return json.dumps(all_stats)
+
+
+@app.route("/createTransaction", methods=["POST"])
+def createTransaction():
+    itemId = int(request.form["itemId"])
+    chosenQuantity = request.form["chosenQuantity"]
+    originalQuantity = request.form["originalQuantity"]
+    resultingPrice = request.form["resultingPrice"]
+    storeId = int(request.cookies.get("storeId"))
+    staffId = request.cookies.get("staffId")
+    currentDateTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    newQty = int(originalQuantity) - int(chosenQuantity)
+
+    mydict = {
+        "transactionBy": staffId,
+        "storeId": storeId,
+        "itemPurchased": itemId,
+        "quantityPurchased": chosenQuantity,
+        "price": resultingPrice,
+        "datePurchased": currentDateTime,
+    }
+    x = transaction.insert_one(mydict)
+
+    myquery = {"storeId": storeId, "itemId": itemId}
+    newvalues = {"$set": {"quantity": newQty}}
+
+    y = storeItem.update_one(myquery, newvalues)
+
+    if x:
+        return "1"
+    else:
+        return "0"
+
+
+if __name__ == "__main__":
+    # Threaded option to enable multiple instances for multiple user access support
+    app.run(debug=True, threaded=True, port=8080)

@@ -64,3 +64,5 @@ After executing all the queries. We ensure that the connection is closed so that
 ```
 $conn->close();
 ```
+
+# NoSQL

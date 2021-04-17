@@ -7,3 +7,9 @@ Executive - Executive are allowed to enter the POS system to perform transaction
 Manager - Managers are allowed to enter the POS system to perform transactions and additionally, they are given the permission to enter the Product Management System to alter the inventory in the event new stocks arrive.
 
 Staff - Staff's are given the permission to enter the POS system to perform transactions in the event a customer decides to make a purchase.
+
+
+# SQL
+The SQL version was setup using MySQL with PHP to call the database and perform queries and afterwards all the data will be parsed to the HTML page through jQuery.
+
+## Prepared Statement:
